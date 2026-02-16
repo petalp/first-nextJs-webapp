@@ -110,7 +110,7 @@ const EventSchema = new Schema<IEvent>(
  * - Date: validated and normalized to ISO format (YYYY-MM-DD)
  * - Time: normalized to HH:MM format
  */
-EventSchema.pre('save', function (next) {
+EventSchema.pre('save', function () {
   // Generate slug from title if title is modified
   if (this.isModified('title')) {
     this.slug = this.title
@@ -126,7 +126,7 @@ EventSchema.pre('save', function (next) {
   if (this.isModified('date')) {
     const dateObj = new Date(this.date);
     if (isNaN(dateObj.getTime())) {
-      return next(new Error('Invalid date format'));
+      throw new Error('Invalid date format');
     }
     // Store as ISO date string (YYYY-MM-DD)
     this.date = dateObj.toISOString().split('T')[0];
@@ -136,14 +136,12 @@ EventSchema.pre('save', function (next) {
   if (this.isModified('time')) {
     const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
     if (!timeRegex.test(this.time)) {
-      return next(new Error('Time must be in HH:MM format'));
+      throw new Error('Time must be in HH:MM format');
     }
     // Ensure two-digit format (e.g., 9:30 -> 09:30)
     const [hours, minutes] = this.time.split(':');
     this.time = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
   }
-
-  next();
 });
 
 // Prevent model overwrite in development (Next.js hot reload)

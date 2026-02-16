@@ -41,22 +41,14 @@ const BookingSchema = new Schema<IBooking>(
  * Pre-save hook to verify that the referenced event exists
  * Throws an error if the event is not found in the database
  */
-BookingSchema.pre('save', async function (next) {
+BookingSchema.pre('save', async function () {
   // Only validate eventId if it's new or modified
   if (this.isNew || this.isModified('eventId')) {
-    try {
-      const eventExists = await Event.findById(this.eventId);
-      
-      if (!eventExists) {
-        return next(new Error('Referenced event does not exist'));
-      }
-      
-      next();
-    } catch (error) {
-      next(error instanceof Error ? error : new Error('Event validation failed'));
+    const eventExists = await Event.findById(this.eventId);
+    
+    if (!eventExists) {
+      throw new Error('Referenced event does not exist');
     }
-  } else {
-    next();
   }
 });
 
