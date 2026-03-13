@@ -8,7 +8,7 @@ import { Event } from "@/lib/constant"
 
 const EventCard = ({title, image, slug, location, date, time}:Event) =>{
     return (
-        <Link href="/event" id="event-card">
+        <Link href={`/event/${slug}`} id="event-card">
             <Image src={image} alt={title} width={410} height={300} className="poster"/>
 
             <div className="flex flex-row gap-2">

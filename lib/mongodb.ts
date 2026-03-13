@@ -11,6 +11,7 @@ declare global {
 
 // MongoDB connection string from environment variables
 const MONGODB_URI = process.env.MONGODB_URI as string;
+console.log(MONGODB_URI)
 
 if (!MONGODB_URI) {
   throw new Error(
